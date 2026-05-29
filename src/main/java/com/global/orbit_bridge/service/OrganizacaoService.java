@@ -13,7 +13,7 @@ public class OrganizacaoService {
     @Autowired
     private OrganizacaoRepository organizacaoRepository;
 
-    public void salvarOrganizacao(OrganizacaoDto organizacaoDto){
+    public void salvarOrganizacao(OrganizacaoDto organizacaoDto) {
         Organizacao organizacao = Organizacao.builder()
                 .nome(organizacaoDto.getNome())
                 .descricao(organizacaoDto.getDescricao())
@@ -22,24 +22,11 @@ public class OrganizacaoService {
         organizacaoRepository.save(organizacao);
     }
 
-    public void excluirOrganizacao(Long idOrganizacao){
+    public void excluirOrganizacao(Long idOrganizacao) {
         organizacaoRepository.deleteById(idOrganizacao);
     }
 
-    public void modificarOrganizacao(Long idOrganizacao, OrganizacaoDto organizacaoDto){
-        Organizacao organizacao = organizacaoRepository.getReferenceById(idOrganizacao);
-
-        organizacao.setNome(organizacaoDto.getNome());
-        organizacao.setDescricao(organizacaoDto.getDescricao());
-
-        organizacaoRepository.save(organizacao);
-    }
-
-    public List<Organizacao> listarOrganizacoes(){
+    public List<Organizacao> listarOrganizacoes() {
         return organizacaoRepository.findAll();
-    }
-
-    public Organizacao buscarOrganizacaoPorId(Long id){
-        return organizacaoRepository.findById(id).orElseThrow(() -> new RuntimeException("Organização não encontrada"));
     }
 }
