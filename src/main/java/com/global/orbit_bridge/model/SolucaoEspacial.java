@@ -26,7 +26,7 @@ public class SolucaoEspacial {
     private String areaAtuacao;
     private StatusSolucao status;
     private Prioridade prioridade;
-    private List<String> ods;
+    private List<Integer> ods;
     @ManyToOne
     private Organizacao idOrganizacaoResponsavel;
     private LocalDateTime dataCriacao;
