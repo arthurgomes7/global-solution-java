@@ -20,7 +20,8 @@ public class SolucaoService {
     @Autowired
     private SolucaoRepository solucaoRepository;
 
-    public void cadastrarSolucao(SolucaoDto solucaoDto) {
+    @Transactional
+    public ResponseEntity<SolucaoDto> cadastrarSolucao(SolucaoDto solucaoDto) { //Valid
         SolucaoEspacial solucaoEspacial = SolucaoEspacial.builder()
                 .nome(solucaoDto.getNome())
                 .descricao(solucaoDto.getDescricao())
@@ -32,6 +33,7 @@ public class SolucaoService {
                 .build();
 
         solucaoRepository.save(solucaoEspacial);
+        return ResponseEntity.ok(solucaoDto);
     }
 
     public List<SolucaoEspacial> listarSolucoes() {
@@ -39,11 +41,14 @@ public class SolucaoService {
     }
 
     public ResponseEntity<SolucaoEspacial> solucaoPorId(Long id) {
-        return ResponseEntity.ok(solucaoRepository.getReferenceById(id));
+        if (solucaoRepository.existsById(id)) {
+            return ResponseEntity.ok(solucaoRepository.getReferenceById(id));
+        }
+        return ResponseEntity.notFound().build();
     }
 
-    public Optional<List<SolucaoEspacial>> solucoesPorArea(String areaAtuacao) {
-        return solucaoRepository.getAllByAreaAtuacao(areaAtuacao);
+    public List<SolucaoEspacial> solucoesPorArea(String areaAtuacao) {
+        return solucaoRepository.getAllByAreaAtuacao(areaAtuacao).orElseThrow(() -> new RuntimeException("Erro ao consultar Área de Atuação"));
     }
 
     @Transactional
@@ -70,15 +75,19 @@ public class SolucaoService {
         if (!solucaoRepository.existsById(id)) {
             return ResponseEntity.notFound().build();
         }
+        if (solucaoRepository.getReferenceById(id).getStatus() == StatusSolucao.INATIVA || solucaoRepository.getReferenceById(id).getStatus() == StatusSolucao.PAUSADA){
+            return ResponseEntity.badRequest().build();
+        }
         SolucaoEspacial solucaoEspacial = solucaoRepository.getReferenceById(id);
         solucaoEspacial.setStatus(status);
-
         return ResponseEntity.ok(solucaoEspacial);
     }
 
+    @Transactional
     public ResponseEntity<SolucaoEspacial> deletarSolucao(Long id) {
         if (solucaoRepository.existsById(id)) {
-            solucaoRepository.deleteById(id);
+            SolucaoEspacial s = solucaoRepository.getReferenceById(id);
+            s.setStatus(StatusSolucao.INATIVA);
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.notFound().build();
@@ -88,6 +97,7 @@ public class SolucaoService {
         return solucaoRepository.getAllByOds(ods);
     }
 
+    @Transactional
     public String resumoSolucoes() {
 
         Map<StatusSolucao, Long> quantidadePorStatus =
