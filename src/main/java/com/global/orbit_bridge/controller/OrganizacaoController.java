@@ -3,7 +3,9 @@ package com.global.orbit_bridge.controller;
 import com.global.orbit_bridge.dto.OrganizacaoDto;
 import com.global.orbit_bridge.model.Organizacao;
 import com.global.orbit_bridge.service.OrganizacaoService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,7 +24,7 @@ public class OrganizacaoController {
     }
 
     @PostMapping("/cadastrar")
-    public ResponseEntity<OrganizacaoDto> salvarOrganizacao(@RequestBody OrganizacaoDto organizacaoDto){
+    public ResponseEntity<OrganizacaoDto> salvarOrganizacao(@RequestBody @Valid OrganizacaoDto organizacaoDto){
         organizacaoService.salvarOrganizacao(organizacaoDto);
 
         return ResponseEntity.ok(organizacaoDto);
