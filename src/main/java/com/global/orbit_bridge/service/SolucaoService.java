@@ -1,6 +1,7 @@
 package com.global.orbit_bridge.service;
 
 import com.global.orbit_bridge.dto.SolucaoDto;
+import com.global.orbit_bridge.exceptions.SolucaoException;
 import com.global.orbit_bridge.model.SolucaoEspacial;
 import com.global.orbit_bridge.model.enums.Prioridade;
 import com.global.orbit_bridge.model.enums.StatusSolucao;
@@ -48,11 +49,11 @@ public class SolucaoService {
     }
 
     public List<SolucaoEspacial> solucoesPorArea(String areaAtuacao) {
-        return solucaoRepository.getAllByAreaAtuacao(areaAtuacao).orElseThrow(() -> new RuntimeException("Erro ao consultar Área de Atuação"));
+        return solucaoRepository.getAllByAreaAtuacao(areaAtuacao).orElseThrow(() -> new SolucaoException("Erro ao consultar Área de Atuação"));
     }
 
     @Transactional
-    public ResponseEntity<SolucaoEspacial> atualizarSolucao(Long id, SolucaoDto solucaoDto) {
+    public ResponseEntity<SolucaoDto> atualizarSolucao(Long id, SolucaoDto solucaoDto) {
         if (solucaoRepository.existsById(id)) {
             SolucaoEspacial solucaoEspacial = solucaoRepository.getReferenceById(id);
 
@@ -75,16 +76,18 @@ public class SolucaoService {
         if (!solucaoRepository.existsById(id)) {
             return ResponseEntity.notFound().build();
         }
-        if (solucaoRepository.getReferenceById(id).getStatus() == StatusSolucao.INATIVA || solucaoRepository.getReferenceById(id).getStatus() == StatusSolucao.PAUSADA){
+
+        SolucaoEspacial solucaoEspacial = solucaoRepository.getReferenceById(id);
+
+        if (solucaoEspacial.getStatus() == StatusSolucao.INATIVA || solucaoEspacial.getStatus() == StatusSolucao.PAUSADA){
             return ResponseEntity.badRequest().build();
         }
-        SolucaoEspacial solucaoEspacial = solucaoRepository.getReferenceById(id);
         solucaoEspacial.setStatus(status);
         return ResponseEntity.ok(solucaoEspacial);
     }
 
     @Transactional
-    public ResponseEntity<SolucaoEspacial> deletarSolucao(Long id) {
+    public ResponseEntity<SolucaoDto> deletarSolucao(Long id) {
         if (solucaoRepository.existsById(id)) {
             SolucaoEspacial s = solucaoRepository.getReferenceById(id);
             s.setStatus(StatusSolucao.INATIVA);

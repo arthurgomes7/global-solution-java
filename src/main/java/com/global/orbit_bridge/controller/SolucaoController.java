@@ -51,17 +51,20 @@ public class SolucaoController {
     }
 
     @PutMapping
-    public ResponseEntity<SolucaoEspacial> atualizarSolucao(@RequestParam Long id, @RequestBody SolucaoDto solucaoDto){
+    public ResponseEntity<SolucaoDto> atualizarSolucao(@RequestParam Long id, @RequestBody SolucaoDto solucaoDto){
         return solucaoService.atualizarSolucao(id, solucaoDto);
     }
 
-    @PutMapping
-    public ResponseEntity<SolucaoEspacial> atualizarStatus(Long id, StatusSolucao statusSolucao){
-        return solucaoService.alterarStatus(id, statusSolucao);
+    @PatchMapping("/status/{id}")
+    public ResponseEntity<SolucaoEspacial> alterarStatus(
+            @PathVariable Long id,
+            @RequestParam StatusSolucao status) {
+
+        return solucaoService.alterarStatus(id, status);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<SolucaoEspacial> deletarSolucao(@RequestParam Long id){
+    public ResponseEntity<SolucaoDto> deletarSolucao(@RequestParam Long id){
         return solucaoService.deletarSolucao(id);
     }
 }
