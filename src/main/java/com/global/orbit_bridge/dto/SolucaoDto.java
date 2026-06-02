@@ -7,10 +7,12 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 @Data
+@Component
 public class SolucaoDto {
     @NotBlank(message = "O nome não pode estar em branco")
     @Size(max = 30, message = "O nome não pode ter mais que 30 caracteres")

@@ -23,7 +23,9 @@ public class SolucaoEspacial {
     private String nome;
     private String descricao;
     private String areaAtuacao;
+    @Enumerated(EnumType.STRING)
     private StatusSolucao status;
+    @Enumerated(EnumType.STRING)
     private Prioridade prioridade;
     private List<Integer> ods;
     @ManyToOne

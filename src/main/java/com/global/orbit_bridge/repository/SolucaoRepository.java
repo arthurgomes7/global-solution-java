@@ -1,6 +1,7 @@
 package com.global.orbit_bridge.repository;
 
 import com.global.orbit_bridge.model.SolucaoEspacial;
+import com.global.orbit_bridge.model.enums.Prioridade;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -13,5 +14,5 @@ public interface SolucaoRepository extends JpaRepository<SolucaoEspacial, Long> 
 
     Optional<List<SolucaoEspacial>> getAllByOds(Integer ods);
 
-    Integer findAllByPrioridadeAlta();
+    List<SolucaoEspacial> findAllByPrioridade(Prioridade prioridade);
 }

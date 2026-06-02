@@ -134,6 +134,6 @@ public class SolucaoService {
                 "   Inativa: " + quantidadePorStatus.getOrDefault(StatusSolucao.INATIVA, 0L) +
                 "Quantidade por Área:" +
                 "" +
-                "Quantidade por Prioridade Alta: " + solucaoRepository.findAllByPrioridadeAlta();
+                "Quantidade por Prioridade Alta: " + solucaoRepository.findAllByPrioridade(Prioridade.ALTA).stream().count();
     }
 }
