@@ -174,5 +174,3 @@ Excluir solução:
 ```bash
 DELETE /solucoes/1?id=1
 ```
-
-> Observação: as rotas de busca por ODS e área existem no controller atual, mas a definição dos mappings merece revisão para evitar conflitos de path.
