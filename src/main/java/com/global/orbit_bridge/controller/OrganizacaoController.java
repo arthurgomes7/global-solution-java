@@ -5,7 +5,6 @@ import com.global.orbit_bridge.model.Organizacao;
 import com.global.orbit_bridge.service.OrganizacaoService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,7 +30,7 @@ public class OrganizacaoController {
     }
 
     @DeleteMapping("/deletar/{id}")
-    public ResponseEntity<OrganizacaoDto> excluirOrganizacao(@RequestParam Long id){
+    public ResponseEntity<OrganizacaoDto> excluirOrganizacao(@PathVariable Long id){
         organizacaoService.excluirOrganizacao(id);
         return ResponseEntity.noContent().build();
     }
