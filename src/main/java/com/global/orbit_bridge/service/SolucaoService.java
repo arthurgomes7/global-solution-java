@@ -11,9 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -31,6 +31,8 @@ public class SolucaoService {
                 .prioridade(solucaoDto.getPrioridade())
                 .ods(solucaoDto.getOds())
                 .idOrganizacaoResponsavel(solucaoDto.getIdOrganizacaoResponsavel())
+                .dataCriacao(LocalDateTime.now())
+                .dataAtualizacao(LocalDateTime.now())
                 .build();
 
         solucaoRepository.save(solucaoEspacial);
@@ -49,24 +51,26 @@ public class SolucaoService {
     }
 
     public List<SolucaoEspacial> solucoesPorArea(String areaAtuacao) {
-        return solucaoRepository.getAllByAreaAtuacao(areaAtuacao).orElseThrow(() -> new SolucaoException("Erro ao consultar Área de Atuação"));
+        return solucaoRepository.findAllByAreaAtuacao(areaAtuacao).orElseThrow(() -> new SolucaoException("Erro ao consultar Área de Atuação"));
     }
 
     @Transactional
-    public ResponseEntity<SolucaoDto> atualizarSolucao(Long id, SolucaoDto solucaoDto) {
+    public ResponseEntity<SolucaoEspacial> atualizarSolucao(Long id, SolucaoDto solucaoDto) {
         if (solucaoRepository.existsById(id)) {
             SolucaoEspacial solucaoEspacial = solucaoRepository.getReferenceById(id);
+            if (solucaoEspacial.getStatus() != StatusSolucao.INATIVA || solucaoEspacial.getStatus() != StatusSolucao.PAUSADA) {
 
-            solucaoEspacial.setNome(solucaoDto.getNome());
-            solucaoEspacial.setDescricao(solucaoDto.getDescricao());
-            solucaoEspacial.setAreaAtuacao(solucaoDto.getAreaAtuacao());
-            solucaoEspacial.setStatus(solucaoDto.getStatus());
-            solucaoEspacial.setPrioridade(solucaoDto.getPrioridade());
-            solucaoEspacial.setOds(solucaoDto.getOds());
-            solucaoEspacial.setIdOrganizacaoResponsavel(solucaoDto.getIdOrganizacaoResponsavel());
+                solucaoEspacial.setNome(solucaoDto.getNome());
+                solucaoEspacial.setDescricao(solucaoDto.getDescricao());
+                solucaoEspacial.setAreaAtuacao(solucaoDto.getAreaAtuacao());
+                solucaoEspacial.setStatus(solucaoDto.getStatus());
+                solucaoEspacial.setPrioridade(solucaoDto.getPrioridade());
+                solucaoEspacial.setOds(solucaoDto.getOds());
+                solucaoEspacial.setDataAtualizacao(LocalDateTime.now());
 
-            solucaoRepository.save(solucaoEspacial);
-            return ResponseEntity.noContent().build();
+                solucaoRepository.save(solucaoEspacial);
+                return ResponseEntity.ok(solucaoEspacial);
+            }
         }
         return ResponseEntity.notFound().build();
     }
@@ -79,10 +83,11 @@ public class SolucaoService {
 
         SolucaoEspacial solucaoEspacial = solucaoRepository.getReferenceById(id);
 
-        if (solucaoEspacial.getStatus() == StatusSolucao.INATIVA || solucaoEspacial.getStatus() == StatusSolucao.PAUSADA){
+        if (solucaoEspacial.getStatus() == StatusSolucao.INATIVA || solucaoEspacial.getStatus() == StatusSolucao.PAUSADA) {
             return ResponseEntity.badRequest().build();
         }
         solucaoEspacial.setStatus(status);
+        solucaoEspacial.setDataAtualizacao(LocalDateTime.now());
         return ResponseEntity.ok(solucaoEspacial);
     }
 
@@ -96,8 +101,8 @@ public class SolucaoService {
         return ResponseEntity.notFound().build();
     }
 
-    public Optional<List<SolucaoEspacial>> solucoesPorOds(Integer ods) {
-        return solucaoRepository.getAllByOds(ods);
+    public List<SolucaoEspacial> solucoesPorOds(Integer ods) {
+        return solucaoRepository.findByOdsContaining(ods);
     }
 
     @Transactional
@@ -129,14 +134,14 @@ public class SolucaoService {
 
         return "" +
                 "Soluções cadastradas: " + solucaoRepository.count() +
-                "Quantidade por Status: " +
-                "   Em analise : " + quantidadePorStatus.getOrDefault(StatusSolucao.EM_ANALISE, 0L) +
-                "   Em desenvolvimento : " + quantidadePorStatus.getOrDefault(StatusSolucao.EM_DESENVOLVIMENTO, 0L) +
-                "   Implementada: " + quantidadePorStatus.getOrDefault(StatusSolucao.IMPLEMENTADA, 0L) +
-                "   Pausada: " + quantidadePorStatus.getOrDefault(StatusSolucao.PAUSADA, 0L) +
-                "   Inativa: " + quantidadePorStatus.getOrDefault(StatusSolucao.INATIVA, 0L) +
-                "Quantidade por Área:" +
+                "\nQuantidade por Status: " +
+                "   \n-> Em analise : " + quantidadePorStatus.getOrDefault(StatusSolucao.EM_ANALISE, 0L) +
+                "   \n-> Em desenvolvimento : " + quantidadePorStatus.getOrDefault(StatusSolucao.EM_DESENVOLVIMENTO, 0L) +
+                "   \n-> Implementada: " + quantidadePorStatus.getOrDefault(StatusSolucao.IMPLEMENTADA, 0L) +
+                "   \n-> Pausada: " + quantidadePorStatus.getOrDefault(StatusSolucao.PAUSADA, 0L) +
+                "   \n-> Inativa: " + quantidadePorStatus.getOrDefault(StatusSolucao.INATIVA, 0L) +
+                "\nQuantidade por Área: " + solucaoRepository.count() +
                 "" +
-                "Quantidade por Prioridade Alta: " + solucaoRepository.findAllByPrioridade(Prioridade.ALTA).stream().count();
+                "\nQuantidade por Prioridade Alta: " + solucaoRepository.findAllByPrioridade(Prioridade.ALTA).stream().count();
     }
 }
