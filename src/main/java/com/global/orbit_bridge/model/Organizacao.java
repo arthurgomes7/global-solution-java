@@ -1,12 +1,13 @@
 package com.global.orbit_bridge.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Set;
+import java.util.List;
 
 @Entity
 @Data
@@ -19,6 +20,7 @@ public class Organizacao {
     private Long id;
     private String nome;
     private String descricao;
-    @OneToMany
-    private Set<SolucaoEspacial> solucoes;
+    @OneToMany(mappedBy = "idOrganizacaoResponsavel")
+    @JsonIgnore
+    private List<SolucaoEspacial> solucoes;
 }
