@@ -10,9 +10,9 @@ import java.util.Optional;
 
 @Repository
 public interface SolucaoRepository extends JpaRepository<SolucaoEspacial, Long> {
-    Optional<List<SolucaoEspacial>> getAllByAreaAtuacao(String areaAtuacao);
+    Optional<List<SolucaoEspacial>> findAllByAreaAtuacao(String areaAtuacao);
 
-    Optional<List<SolucaoEspacial>> getAllByOds(Integer ods);
+    List<SolucaoEspacial> findByOdsContaining(Integer ods);
 
     List<SolucaoEspacial> findAllByPrioridade(Prioridade prioridade);
 }
