@@ -100,5 +100,4 @@ http://localhost:8080
 - Witalon Antonio - RM 559023
 
 ## Link do video ou caminho
-
-Pendente: o link do video sera adicionado apos o envio.
+https://youtu.be/4v4glofOPC4
